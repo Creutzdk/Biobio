@@ -2,145 +2,541 @@
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Malling Bio – Timer Integration v4 Failsafe</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Malling Bio – v5 Biograf Control Panel</title>
 <meta name="theme-color" content="#0b0b12">
 <style>
-body{font-family:-apple-system,system-ui,Arial;margin:0;padding:18px;background:#0b0b12;color:#fff}
-h1{font-size:22px;margin:0 0 14px}
-.card{background:#151522;padding:16px;border-radius:18px;margin-bottom:16px;border:1px solid #2b2b3c}
-label{display:block;margin-top:10px;margin-bottom:6px;color:#bbb}
-input{width:100%;padding:12px;border-radius:12px;border:1px solid #333;background:#000;color:#fff;font-size:16px}
-button{padding:12px;border-radius:12px;border:none;margin-top:10px;width:100%;font-weight:700;font-size:16px;cursor:pointer}
-.primary{background:#ffcc00;color:#000}
-.copy{background:#2ee59d;color:#000}
-.run{background:#ff2d55;color:#fff}
-.alt{background:#5c7cfa;color:#fff}
-.big{font-size:26px;margin-top:12px;font-weight:800}
-.small{color:#aaa;font-size:13px;margin-top:8px;line-height:1.4}
-.notice{background:#1c1c2a;padding:14px;border-radius:14px;border:1px solid #303048;margin-bottom:16px}
-.notice code{background:#000;padding:2px 6px;border-radius:6px}
-.row{display:grid;grid-template-columns:1fr;gap:10px}
-.status-ok{color:#2ee59d}
-.status-warn{color:#ffcc00}
-@media (min-width:800px){.row{grid-template-columns:1fr 1fr}}
+:root{
+  --bg:#0b0b12; --card:#171726; --line:#2a2a3b; --text:#fff; --muted:#aeb0c0;
+  --gold:#ffcc00; --red:#ff2d55; --green:#2ee59d; --blue:#5c7cfa; --orange:#ff9f0a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:16px; color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(900px 700px at 10% 5%, rgba(255,45,85,.16), transparent 55%),
+    radial-gradient(800px 600px at 90% 10%, rgba(255,204,0,.12), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, rgba(46,229,157,.08), transparent 55%),
+    var(--bg);
+}
+h1,h2,h3,p{margin:0}
+header{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px;
+}
+.brand{display:flex; gap:12px; align-items:center}
+.logo{
+  width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;color:#111;background:linear-gradient(135deg,var(--gold),#ffea85);
+  box-shadow:0 10px 30px rgba(255,204,0,.18);
+}
+.subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.pill{
+  border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
+  color:var(--muted); padding:8px 10px; border-radius:999px; font-size:12px; white-space:nowrap;
+}
+.grid-top{display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:12px}
+.grid-main{display:grid; grid-template-columns:1fr; gap:12px}
+.panel,.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.10); border-radius:22px; overflow:hidden;
+  box-shadow:0 22px 70px rgba(0,0,0,.45);
+}
+.panel-head,.card-head{
+  padding:14px; display:flex; justify-content:space-between; align-items:center; gap:8px;
+  background:rgba(0,0,0,.18); border-bottom:1px dashed rgba(255,255,255,.14);
+}
+.panel-body,.card-body{padding:14px}
+.row{display:grid; grid-template-columns:1fr; gap:10px}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase}
+input,select{
+  width:100%; border-radius:14px; border:1px solid var(--line); background:#0e0e18; color:#fff;
+  padding:13px 12px; font-size:16px; outline:none;
+}
+button{
+  width:100%; padding:13px 12px; border:none; border-radius:14px; cursor:pointer;
+  font-size:15px; font-weight:800;
+}
+.btn-primary{background:linear-gradient(135deg,var(--red),var(--gold)); color:#111}
+.btn-green{background:rgba(46,229,157,.16); color:#fff; border:1px solid rgba(46,229,157,.3)}
+.btn-red{background:rgba(255,45,85,.15); color:#fff; border:1px solid rgba(255,45,85,.28)}
+.btn-blue{background:rgba(92,124,250,.18); color:#fff; border:1px solid rgba(92,124,250,.26)}
+.btn-ghost{background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.12)}
+.buttons2,.buttons3,.buttons4{display:grid; gap:10px; margin-top:10px}
+.buttons2{grid-template-columns:1fr 1fr}
+.buttons3{grid-template-columns:1fr 1fr 1fr}
+.buttons4{grid-template-columns:repeat(4,1fr)}
+.result{
+  margin-top:12px; border-radius:18px; padding:12px; background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.10)
+}
+.big{font-size:28px; font-weight:900; margin-top:6px}
+.meta{font-size:13px; color:var(--muted); margin-top:6px}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.chip{
+  padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05); font-size:12px; cursor:pointer;
+}
+.summary{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.mini{
+  border-radius:16px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.10)
+}
+.traffic{
+  display:inline-flex; align-items:center; gap:8px; font-size:12px; margin-top:8px
+}
+.dot{width:12px; height:12px; border-radius:999px; background:#666; box-shadow:0 0 0 4px rgba(255,255,255,.04)}
+.dot.green{background:var(--green)}
+.dot.orange{background:var(--orange)}
+.dot.red{background:var(--red)}
+.notice{
+  margin-top:12px; border-radius:16px; padding:12px; background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10); color:var(--muted); font-size:13px; line-height:1.45
+}
+.overlay{
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:9999;
+  background:
+    radial-gradient(900px 700px at 50% 25%, rgba(255,204,0,.22), transparent 55%),
+    radial-gradient(900px 700px at 50% 70%, rgba(255,45,85,.24), transparent 55%),
+    rgba(0,0,0,.92);
+  padding:18px; text-align:center;
+}
+.overlay.show{display:flex}
+.overlay .box{
+  width:min(720px,100%); border-radius:28px; padding:18px; background:rgba(18,18,30,.86);
+  border:1px solid rgba(255,255,255,.14); box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+.overlay .now{font-size:48px; font-weight:1000; color:var(--gold); margin:8px 0 12px}
+.footer{margin-top:14px; color:var(--muted); font-size:12px; line-height:1.45}
+@media (min-width:900px){
+  .grid-top{grid-template-columns:1.2fr .8fr}
+  .grid-main{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
-<h1>🎬 Malling Bio – Timer Integration v4 Failsafe</h1>
+<header>
+  <div class="brand">
+    <div class="logo">MB</div>
+    <div>
+      <h1>Malling Bio – v5 Biograf Control Panel</h1>
+      <div class="subtitle">2 sale • live countdown • presets • timer-failsafe • biograf-mode 🍿</div>
+    </div>
+  </div>
+  <div class="pill" id="clock">—</div>
+</header>
 
-<div class="notice">
-  <strong>Failsafe-flow:</strong><br>
-  1) Webappen beregner sekunderne<br>
-  2) Den <strong>kopierer automatisk</strong> sekunder til udklipsholderen<br>
-  3) Den prøver at åbne genvejen <code>Start Lys Timer</code><br>
-  4) Hvis det ikke virker, kan du trykke fallback-knappen og bruge udklipsholderen
+<div class="grid-top">
+  <section class="panel">
+    <div class="panel-head">
+      <strong>🎛 Kontrolpanel</strong>
+      <div class="pill">Ultimate</div>
+    </div>
+    <div class="panel-body">
+      <div class="row3">
+        <div>
+          <label>Preset</label>
+          <select id="preset">
+            <option value="">Vælg preset</option>
+            <option value="5">Tænd 5 min før slut</option>
+            <option value="6">Tænd 6 min før slut</option>
+            <option value="7">Tænd 7 min før slut</option>
+            <option value="8">Tænd 8 min før slut</option>
+          </select>
+        </div>
+        <div>
+          <label>Brug på begge sale</label>
+          <button class="btn-blue" onclick="applyPresetBoth()">Anvend preset</button>
+        </div>
+        <div>
+          <label>Nulstil alt</label>
+          <button class="btn-red" onclick="resetAll()">Reset control panel</button>
+        </div>
+      </div>
+      <div class="summary" style="margin-top:12px">
+        <div class="mini">
+          <div class="meta">Sal 1</div>
+          <div class="big" id="sum1">—</div>
+          <div class="traffic"><span class="dot" id="dot1"></span><span id="dotText1">Klar</span></div>
+        </div>
+        <div class="mini">
+          <div class="meta">Sal 2</div>
+          <div class="big" id="sum2">—</div>
+          <div class="traffic"><span class="dot" id="dot2"></span><span id="dotText2">Klar</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <strong>ℹ️ Timer-integration</strong>
+      <div class="pill">Failsafe</div>
+    </div>
+    <div class="panel-body">
+      <div class="notice">
+        Shortcut-navn: <b>Start Lys Timer</b><br>
+        Engelsk Shortcuts-opskrift:<br>
+        <b>Get Clipboard</b> → <b>Start Timer</b><br><br>
+        Webappen kopierer sekunder først og prøver derefter at åbne genvejen.<br>
+        Hvis genvejen driller, kan du altid trykke <b>Kopiér sekunder</b> og køre genvejen manuelt.
+      </div>
+    </div>
+  </section>
 </div>
 
-<div class="row">
-  <div class="card">
-    <h2>Sal 1</h2>
-    <label>Nået til</label>
-    <input id="c1" placeholder="0:45:50" value="0:45:50">
-    <label>Tænd lys ved</label>
-    <input id="t1" placeholder="2:03:30" value="2:03:30">
-    <button class="primary" onclick="calc('1')">Beregn</button>
-    <div class="big" id="r1">—</div>
-    <div class="small" id="h1">—</div>
-    <div class="small" id="s1_status_line">Klar</div>
-    <button class="run" onclick="runShortcutFailsafe('1')">🚀 Start timer via Genveje</button>
-    <button class="copy" onclick="copySeconds('1')">📋 Kopiér sekunder igen</button>
-    <button class="alt" onclick="showFallback('1')">🛟 Fallback hvis genvej ikke starter</button>
-  </div>
+<div class="grid-main">
+  <section class="card">
+    <div class="card-head">
+      <strong>🎬 Sal 1</strong>
+      <div class="pill">Egen alarm</div>
+    </div>
+    <div class="card-body">
+      <div class="row3">
+        <div>
+          <label>Film varer</label>
+          <input id="s1_total" value="1:44:07" placeholder="1:44:07">
+        </div>
+        <div>
+          <label>Nået til</label>
+          <input id="s1_current" value="0:28:30" placeholder="0:28:30">
+        </div>
+        <div>
+          <label>Tænd lys ved</label>
+          <input id="s1_target" value="1:42:01" placeholder="1:42:01">
+        </div>
+      </div>
 
-  <div class="card">
-    <h2>Sal 2</h2>
-    <label>Nået til</label>
-    <input id="c2" placeholder="0:10:00" value="0:10:00">
-    <label>Tænd lys ved</label>
-    <input id="t2" placeholder="1:40:00" value="1:40:00">
-    <button class="primary" onclick="calc('2')">Beregn</button>
-    <div class="big" id="r2">—</div>
-    <div class="small" id="h2">—</div>
-    <div class="small" id="s2_status_line">Klar</div>
-    <button class="run" onclick="runShortcutFailsafe('2')">🚀 Start timer via Genveje</button>
-    <button class="copy" onclick="copySeconds('2')">📋 Kopiér sekunder igen</button>
-    <button class="alt" onclick="showFallback('2')">🛟 Fallback hvis genvej ikke starter</button>
-  </div>
+      <div class="chips">
+        <div class="chip" onclick="setTargetFromEnd('s1',5)">5 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s1',6)">6 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s1',7)">7 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s1',8)">8 min før slut</div>
+      </div>
+
+      <div class="buttons4">
+        <button class="btn-ghost" onclick="adjustCurrent('s1',-30)">−30 sek</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s1',-300)">−5 min</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s1',300)">+5 min</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s1',30)">+30 sek</button>
+      </div>
+
+      <div class="buttons3">
+        <button class="btn-primary" onclick="calc('s1')">Beregn</button>
+        <button class="btn-green" onclick="startAlarm('s1')">Start alarm</button>
+        <button class="btn-red" onclick="stopAlarm('s1')">Stop</button>
+      </div>
+
+      <div class="buttons2">
+        <button class="btn-blue" onclick="runShortcutFailsafe('s1')">Start timer via Genveje</button>
+        <button class="btn-ghost" onclick="copySeconds('s1')">Kopiér sekunder</button>
+      </div>
+
+      <div class="result">
+        <div>Sæt alarm til:</div>
+        <div class="big" id="s1_result">—</div>
+        <div class="meta" id="s1_status">Klar</div>
+        <div class="meta" id="s1_when">—</div>
+        <div class="meta" id="s1_seconds">—</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <strong>🎬 Sal 2</strong>
+      <div class="pill">Egen alarm</div>
+    </div>
+    <div class="card-body">
+      <div class="row3">
+        <div>
+          <label>Film varer</label>
+          <input id="s2_total" value="2:10:22" placeholder="2:10:22">
+        </div>
+        <div>
+          <label>Nået til</label>
+          <input id="s2_current" value="0:45:50" placeholder="0:45:50">
+        </div>
+        <div>
+          <label>Tænd lys ved</label>
+          <input id="s2_target" value="2:03:30" placeholder="2:03:30">
+        </div>
+      </div>
+
+      <div class="chips">
+        <div class="chip" onclick="setTargetFromEnd('s2',5)">5 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s2',6)">6 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s2',7)">7 min før slut</div>
+        <div class="chip" onclick="setTargetFromEnd('s2',8)">8 min før slut</div>
+      </div>
+
+      <div class="buttons4">
+        <button class="btn-ghost" onclick="adjustCurrent('s2',-30)">−30 sek</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s2',-300)">−5 min</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s2',300)">+5 min</button>
+        <button class="btn-ghost" onclick="adjustCurrent('s2',30)">+30 sek</button>
+      </div>
+
+      <div class="buttons3">
+        <button class="btn-primary" onclick="calc('s2')">Beregn</button>
+        <button class="btn-green" onclick="startAlarm('s2')">Start alarm</button>
+        <button class="btn-red" onclick="stopAlarm('s2')">Stop</button>
+      </div>
+
+      <div class="buttons2">
+        <button class="btn-blue" onclick="runShortcutFailsafe('s2')">Start timer via Genveje</button>
+        <button class="btn-ghost" onclick="copySeconds('s2')">Kopiér sekunder</button>
+      </div>
+
+      <div class="result">
+        <div>Sæt alarm til:</div>
+        <div class="big" id="s2_result">—</div>
+        <div class="meta" id="s2_status">Klar</div>
+        <div class="meta" id="s2_when">—</div>
+        <div class="meta" id="s2_seconds">—</div>
+      </div>
+    </div>
+  </section>
 </div>
 
-<div class="notice" id="fallbackBox" style="display:none">
-  <strong>Fallback-guide</strong><br>
-  <span id="fallbackText"></span><br><br>
-  Lav en genvej med navnet <code>Start Lys Timer</code> med disse handlinger:<br>
-  <code>Hent fra udklipsholder</code> → <code>Tal</code> eller <code>Konverter til tal</code> → <code>Start timer</code>
+<div class="footer">
+  Tip: Upload som <b>index.html</b> til GitHub Pages, åbn i Safari og vælg <b>Føj til hjemmeskærm</b>.
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="box">
+    <div class="pill" id="ov_title">Malling Bio siger</div>
+    <div class="now" id="ov_now">TÆND LYSET NU!</div>
+    <div id="ov_sub">Alarmen er gået – tak for en god forestilling 🍿</div>
+    <div class="buttons2" style="margin-top:14px">
+      <button class="btn-primary" onclick="hideOverlay()">Okay 💡</button>
+      <button class="btn-ghost" onclick="silenceAll()">Stop alle alarmer</button>
+    </div>
+  </div>
 </div>
 
 <script>
-function parse(t){
-  let p=String(t||"").trim().split(":").map(Number);
-  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
-  if(p.length===2) return p[0]*60+p[1];
-  if(p.length===1) return p[0];
-  return 0;
+const timers = {};
+function $(id){ return document.getElementById(id); }
+
+function parseTime(str){
+  const parts = String(str || "").trim().split(":").map(p => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  let h=0,m=0,s=0;
+  if (parts.length === 3){ h=+parts[0]; m=+parts[1]; s=+parts[2]; }
+  else if (parts.length === 2){ m=+parts[0]; s=+parts[1]; }
+  else { s=+parts[0]; }
+  if ([h,m,s].some(x => Number.isNaN(x) || x < 0)) return null;
+  return h*3600 + m*60 + s;
 }
-function fmt(d){
-  d=Math.max(0,Math.floor(d));
-  let h=Math.floor(d/3600), m=Math.floor((d%3600)/60), s=d%60;
-  if(h>0) return `${h} t ${m} min ${s} sek`;
-  if(m>0) return `${m} min ${s} sek`;
+function secToHMS(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+function fmt(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  if (h > 0) return `${h} time${h===1?'':'r'}, ${m} min og ${s} sek`;
+  if (m > 0) return `${m} min og ${s} sek`;
   return `${s} sek`;
 }
-function calc(n){
-  let c=parse(document.getElementById("c"+n).value||"0");
-  let t=parse(document.getElementById("t"+n).value||"0");
-  let d=t-c;
-  window["sec"+n]=d;
-  document.getElementById("r"+n).innerText = d>0 ? fmt(d) : "0 sek";
-  document.getElementById("h"+n).innerText = d>0 ? `${d} sekunder til timeren` : "Tiden er allerede passeret";
-  document.getElementById("s"+n+"_status_line").innerText = d>0 ? "Klar til at starte timer" : "Ugyldig eller passeret tid";
-  document.getElementById("s"+n+"_status_line").className = "small " + (d>0 ? "status-ok" : "status-warn");
+function fmtClock(date){
+  const hh = String(date.getHours()).padStart(2,"0");
+  const mm = String(date.getMinutes()).padStart(2,"0");
+  const ss = String(date.getSeconds()).padStart(2,"0");
+  return `${hh}:${mm}:${ss}`;
 }
-async function copySeconds(n){
-  let val=window["sec"+n];
-  if(typeof val!=="number"){ calc(n); val=window["sec"+n]; }
-  await navigator.clipboard.writeText(String(val));
-  document.getElementById("s"+n+"_status_line").innerText = `Kopieret ${val} sek til udklipsholder`;
-  document.getElementById("s"+n+"_status_line").className = "small status-ok";
+function tickClock(){ $("clock").textContent = fmtClock(new Date()); }
+setInterval(tickClock, 1000); tickClock();
+
+function saveState(){
+  const ids = ["s1_total","s1_current","s1_target","s2_total","s2_current","s2_target"];
+  const data = {};
+  ids.forEach(id => data[id] = $(id).value);
+  localStorage.setItem("mb_v5_control_panel", JSON.stringify(data));
 }
-async function runShortcutFailsafe(n){
-  let val=window["sec"+n];
-  if(typeof val!=="number"){ calc(n); val=window["sec"+n]; }
-  if(val<=0){
-    alert("Tiden er allerede passeret.");
+function loadState(){
+  const raw = localStorage.getItem("mb_v5_control_panel");
+  if (!raw) return false;
+  try{
+    const data = JSON.parse(raw);
+    Object.keys(data).forEach(id => { if ($(id)) $(id).value = data[id]; });
+    return true;
+  }catch(e){ return false; }
+}
+function setDot(prefix, color, text){
+  const n = prefix === "s1" ? "1" : "2";
+  $(`dot${n}`).className = `dot ${color}`;
+  $(`dotText${n}`).textContent = text;
+}
+function updateSummary(prefix, text){
+  const el = prefix === "s1" ? $("sum1") : $("sum2");
+  el.textContent = text;
+}
+function calc(prefix){
+  saveState();
+  const cur = parseTime($(`${prefix}_current`).value);
+  const tgt = parseTime($(`${prefix}_target`).value);
+  const total = parseTime($(`${prefix}_total`).value);
+
+  if (cur == null || tgt == null){
+    $(`${prefix}_result`).textContent = "Ugyldigt format";
+    $(`${prefix}_status`).textContent = "Brug fx 0:37:30 eller 1:42:10";
+    $(`${prefix}_when`).textContent = "—";
+    $(`${prefix}_seconds`).textContent = "—";
+    updateSummary(prefix, "—");
+    setDot(prefix, "", "Formatfejl");
+    return null;
+  }
+
+  const diff = tgt - cur;
+  if (diff <= 0){
+    $(`${prefix}_result`).textContent = "0 sek";
+    $(`${prefix}_status`).textContent = "Du er allerede forbi tænd-lyspunktet";
+    $(`${prefix}_when`).textContent = "—";
+    $(`${prefix}_seconds`).textContent = "0 sekunder";
+    updateSummary(prefix, "0 sek");
+    setDot(prefix, "red", "For sent");
+    return 0;
+  }
+
+  let status = "Klar 🍿";
+  if (total != null && tgt > total) status = "Obs: tænd-tid er efter filmens sluttid";
+
+  $(`${prefix}_result`).textContent = fmt(diff);
+  $(`${prefix}_status`).textContent = status;
+  $(`${prefix}_when`).textContent = `Tænd lys kl. ${fmtClock(new Date(Date.now() + diff*1000))}`;
+  $(`${prefix}_seconds`).textContent = `${diff} sekunder`;
+  updateSummary(prefix, fmt(diff));
+
+  if (diff > 900) setDot(prefix, "green", "God tid");
+  else if (diff > 300) setDot(prefix, "orange", "Nærmer sig");
+  else setDot(prefix, "red", "Snart lys");
+
+  return diff;
+}
+function setTargetFromEnd(prefix, minutesBeforeEnd){
+  const total = parseTime($(`${prefix}_total`).value);
+  if (total == null){
+    $(`${prefix}_status`).textContent = "Skriv først filmens længde";
     return;
   }
+  $(`${prefix}_target`).value = secToHMS(total - minutesBeforeEnd*60);
+  calc(prefix);
+}
+function applyPresetBoth(){
+  const p = parseInt($("preset").value, 10);
+  if (!p) return;
+  setTargetFromEnd("s1", p);
+  setTargetFromEnd("s2", p);
+}
+function adjustCurrent(prefix, amount){
+  const cur = parseTime($(`${prefix}_current`).value) || 0;
+  $(`${prefix}_current`).value = secToHMS(Math.max(0, cur + amount));
+  calc(prefix);
+}
+async function copySeconds(prefix){
+  let val = calc(prefix);
+  if (!val) return;
+  await navigator.clipboard.writeText(String(val));
+  $(`${prefix}_status`).textContent = `Kopieret ${val} sek til udklipsholder`;
+}
+async function runShortcutFailsafe(prefix){
+  let val = calc(prefix);
+  if (!val) return;
   try{
     await navigator.clipboard.writeText(String(val));
-    document.getElementById("s"+n+"_status_line").innerText = `Kopieret ${val} sek. Prøver at åbne Genveje...`;
-    document.getElementById("s"+n+"_status_line").className = "small status-ok";
+    $(`${prefix}_status`).textContent = `Kopieret ${val} sek. Åbner Genveje...`;
   }catch(e){
-    document.getElementById("s"+n+"_status_line").innerText = "Kunne ikke kopiere automatisk. Brug knappen Kopiér sekunder igen.";
-    document.getElementById("s"+n+"_status_line").className = "small status-warn";
+    $(`${prefix}_status`).textContent = "Kunne ikke kopiere automatisk. Brug Kopiér sekunder.";
   }
   const shortcutName = encodeURIComponent("Start Lys Timer");
   const text = encodeURIComponent(String(val));
-  const url = `shortcuts://run-shortcut?name=${shortcutName}&input=text&text=${text}`;
-  window.location.href = url;
-  setTimeout(() => {
-    document.getElementById("s"+n+"_status_line").innerText = "Hvis timer ikke startede: tryk fallback-knappen nedenfor.";
-    document.getElementById("s"+n+"_status_line").className = "small status-warn";
-  }, 1800);
+  window.location.href = `shortcuts://run-shortcut?name=${shortcutName}&input=text&text=${text}`;
 }
-function showFallback(n){
-  let val=window["sec"+n];
-  if(typeof val!=="number"){ calc(n); val=window["sec"+n]; }
-  document.getElementById("fallbackBox").style.display = "block";
-  document.getElementById("fallbackText").innerHTML =
-    `For Sal ${n}: Der er <strong>${val} sekunder</strong> i udklipsholderen eller klar til kopiering. ` +
-    `Åbn genvejen manuelt og lad den hente fra udklipsholderen.`;
+function beep(times=3){
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  let t0 = ctx.currentTime;
+  for(let i=0;i<times;i++){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "triangle"; o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.001, t0);
+    g.gain.exponentialRampToValueAtTime(0.35, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+    o.start(t0); o.stop(t0 + 0.24); t0 += 0.28;
+  }
 }
-calc('1'); calc('2');
+function startAlarm(prefix){
+  const diff = calc(prefix);
+  if (!diff) return;
+  stopAlarm(prefix, true);
+  try { beep(1); } catch(e){}
+  const endAt = Date.now() + diff * 1000;
+  timers[prefix] = setInterval(() => {
+    const left = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+    if (left > 0){
+      $(`${prefix}_status`).textContent = `Tid tilbage: ${fmt(left)}`;
+      $(`${prefix}_result`).textContent = fmt(left);
+      updateSummary(prefix, fmt(left));
+      if (left > 900) setDot(prefix, "green", "God tid");
+      else if (left > 300) setDot(prefix, "orange", "Nærmer sig");
+      else setDot(prefix, "red", "Snart lys");
+    } else {
+      clearInterval(timers[prefix]); timers[prefix] = null;
+      try { beep(4); } catch(e){}
+      if (navigator.vibrate) navigator.vibrate([250,120,250,120,500]);
+      showOverlay(prefix);
+      $(`${prefix}_status`).textContent = "NU!";
+      $(`${prefix}_result`).textContent = "TÆND LYSET NU!";
+      updateSummary(prefix, "NU!");
+      setDot(prefix, "red", "Lys nu");
+    }
+  }, 250);
+}
+function stopAlarm(prefix, silent=false){
+  if (timers[prefix]){
+    clearInterval(timers[prefix]);
+    timers[prefix] = null;
+  }
+  if (!silent){
+    calc(prefix);
+    $(`${prefix}_status`).textContent = "Alarm stoppet.";
+  }
+}
+function silenceAll(){
+  stopAlarm("s1", true);
+  stopAlarm("s2", true);
+  hideOverlay();
+  calc("s1"); calc("s2");
+}
+function resetAll(){
+  ["s1_total","s1_current","s1_target","s2_total","s2_current","s2_target"].forEach(id => $(id).value = "");
+  localStorage.removeItem("mb_v5_control_panel");
+  silenceAll();
+}
+function showOverlay(prefix){
+  $("ov_title").textContent = prefix === "s1" ? "Sal 1 siger" : "Sal 2 siger";
+  $("ov_now").textContent = prefix === "s1" ? "TÆND LYSET NU! (SAL 1)" : "TÆND LYSET NU! (SAL 2)";
+  $("overlay").classList.add("show");
+}
+function hideOverlay(){ $("overlay").classList.remove("show"); }
+
+["s1_total","s1_current","s1_target","s2_total","s2_current","s2_target"].forEach(id => {
+  $(id).addEventListener("input", () => calc(id.slice(0,2)));
+});
+
+if (!loadState()){
+  $("s1_total").value = "1:44:07";
+  $("s1_current").value = "0:28:30";
+  $("s1_target").value = "1:42:01";
+  $("s2_total").value = "2:10:22";
+  $("s2_current").value = "0:45:50";
+  $("s2_target").value = "2:03:30";
+}
+calc("s1");
+calc("s2");
 </script>
 </body>
 </html>
