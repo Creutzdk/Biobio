@@ -3,64 +3,114 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Malling Bio – Timer Integration</title>
+<title>Malling Bio – Timer Integration v3</title>
+<meta name="theme-color" content="#0b0b12">
 <style>
-body{font-family:-apple-system,system-ui;margin:0;padding:20px;background:#0b0b12;color:#fff}
-.card{background:#151522;padding:16px;border-radius:16px;margin-bottom:16px}
-input{width:100%;padding:12px;margin-top:6px;border-radius:10px;border:1px solid #333;background:#000;color:#fff}
-button{padding:12px;border-radius:10px;border:none;margin-top:10px;width:100%;font-weight:bold}
+body{font-family:-apple-system,system-ui,Arial;margin:0;padding:18px;background:#0b0b12;color:#fff}
+h1{font-size:22px;margin:0 0 14px}
+.card{background:#151522;padding:16px;border-radius:18px;margin-bottom:16px;border:1px solid #2b2b3c}
+label{display:block;margin-top:10px;margin-bottom:6px;color:#bbb}
+input{width:100%;padding:12px;border-radius:12px;border:1px solid #333;background:#000;color:#fff;font-size:16px}
+button{padding:12px;border-radius:12px;border:none;margin-top:10px;width:100%;font-weight:700;font-size:16px;cursor:pointer}
 .primary{background:#ffcc00;color:#000}
 .copy{background:#2ee59d;color:#000}
-.big{font-size:24px;margin-top:10px}
+.run{background:#ff2d55;color:#fff}
+.big{font-size:26px;margin-top:12px;font-weight:800}
+.small{color:#aaa;font-size:13px;margin-top:8px;line-height:1.4}
+.notice{background:#1c1c2a;padding:14px;border-radius:14px;border:1px solid #303048;margin-bottom:16px}
+.notice code{background:#000;padding:2px 6px;border-radius:6px}
+.row{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:800px){.row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
+<h1>🎬 Malling Bio – Timer Integration v3</h1>
 
-<h2>🎬 Malling Bio – Timer Integration</h2>
-
-<div class="card">
-<h3>Sal 1</h3>
-<label>Nået til</label>
-<input id="c1" placeholder="0:45:50">
-<label>Tænd lys ved</label>
-<input id="t1" placeholder="2:03:30">
-<button class="primary" onclick="calc('1')">Beregn</button>
-<div class="big" id="r1">—</div>
-<button class="copy" onclick="copy('1')">📋 Kopiér sekunder</button>
+<div class="notice">
+  <strong>Sådan virker auto-start:</strong><br>
+  1) Lav en iPhone-genvej der hedder <code>Start Lys Timer</code><br>
+  2) Genvejen skal hente tekst-input og starte en timer med det antal sekunder<br>
+  3) Her i webappen trykker du <strong>Start timer via Genveje</strong>
 </div>
 
-<div class="card">
-<h3>Sal 2</h3>
-<label>Nået til</label>
-<input id="c2" placeholder="0:10:00">
-<label>Tænd lys ved</label>
-<input id="t2" placeholder="1:40:00">
-<button class="primary" onclick="calc('2')">Beregn</button>
-<div class="big" id="r2">—</div>
-<button class="copy" onclick="copy('2')">📋 Kopiér sekunder</button>
+<div class="row">
+  <div class="card">
+    <h2>Sal 1</h2>
+    <label>Nået til</label>
+    <input id="c1" placeholder="0:45:50" value="0:45:50">
+    <label>Tænd lys ved</label>
+    <input id="t1" placeholder="2:03:30" value="2:03:30">
+    <button class="primary" onclick="calc('1')">Beregn</button>
+    <div class="big" id="r1">—</div>
+    <div class="small" id="h1">—</div>
+    <button class="copy" onclick="copySeconds('1')">📋 Kopiér sekunder</button>
+    <button class="run" onclick="runShortcut('1')">🚀 Start timer via Genveje</button>
+  </div>
+
+  <div class="card">
+    <h2>Sal 2</h2>
+    <label>Nået til</label>
+    <input id="c2" placeholder="0:10:00" value="0:10:00">
+    <label>Tænd lys ved</label>
+    <input id="t2" placeholder="1:40:00" value="1:40:00">
+    <button class="primary" onclick="calc('2')">Beregn</button>
+    <div class="big" id="r2">—</div>
+    <div class="small" id="h2">—</div>
+    <button class="copy" onclick="copySeconds('2')">📋 Kopiér sekunder</button>
+    <button class="run" onclick="runShortcut('2')">🚀 Start timer via Genveje</button>
+  </div>
+</div>
+
+<div class="notice">
+  <strong>Shortcut-opskrift:</strong><br>
+  I Genveje laver du en genvej med navnet <code>Start Lys Timer</code> med disse handlinger:<br>
+  <strong>Modtag input</strong> → <strong>Tal</strong> → <strong>Start timer</strong><br>
+  Eller:<br>
+  <strong>Få tekst fra input</strong> → <strong>Konverter til tal</strong> → <strong>Start timer</strong>
 </div>
 
 <script>
 function parse(t){
- let p=t.split(":").map(Number);
- if(p.length==3)return p[0]*3600+p[1]*60+p[2];
- if(p.length==2)return p[0]*60+p[1];
- return p[0];
+  let p=String(t||"").trim().split(":").map(Number);
+  if(p.length===3) return p[0]*3600+p[1]*60+p[2];
+  if(p.length===2) return p[0]*60+p[1];
+  if(p.length===1) return p[0];
+  return 0;
+}
+function fmt(d){
+  d=Math.max(0,Math.floor(d));
+  let h=Math.floor(d/3600), m=Math.floor((d%3600)/60), s=d%60;
+  if(h>0) return `${h} t ${m} min ${s} sek`;
+  if(m>0) return `${m} min ${s} sek`;
+  return `${s} sek`;
 }
 function calc(n){
- let c=parse(document.getElementById("c"+n).value||"0");
- let t=parse(document.getElementById("t"+n).value||"0");
- let d=t-c;
- document.getElementById("r"+n).innerText=d+" sek";
- window["sec"+n]=d;
+  let c=parse(document.getElementById("c"+n).value||"0");
+  let t=parse(document.getElementById("t"+n).value||"0");
+  let d=t-c;
+  window["sec"+n]=d;
+  document.getElementById("r"+n).innerText = d>0 ? fmt(d) : "0 sek";
+  document.getElementById("h"+n).innerText = d>0 ? `${d} sekunder til timeren` : "Tiden er allerede passeret";
 }
-function copy(n){
- let val=window["sec"+n]||0;
- navigator.clipboard.writeText(val);
- alert("Kopieret: "+val+" sek
-Brug i Genveje eller Siri");
+async function copySeconds(n){
+  let val=window["sec"+n];
+  if(typeof val!=="number") calc(n), val=window["sec"+n];
+  await navigator.clipboard.writeText(String(val));
+  alert("Kopieret: "+val+" sek");
 }
+function runShortcut(n){
+  let val=window["sec"+n];
+  if(typeof val!=="number") calc(n), val=window["sec"+n];
+  if(val<=0){
+    alert("Tiden er allerede passeret.");
+    return;
+  }
+  const shortcutName = encodeURIComponent("Start Lys Timer");
+  const text = encodeURIComponent(String(val));
+  const url = `shortcuts://run-shortcut?name=${shortcutName}&input=text&text=${text}`;
+  window.location.href = url;
+}
+calc('1'); calc('2');
 </script>
-
 </body>
 </html>
