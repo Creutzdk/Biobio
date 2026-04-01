@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+  <title>Malling Bio – Lys-alarm (2 sale)</title>
+  <meta name="theme-color" content="#09090f">
+  <style>
+    :root{
+      --bg:#09090f; --ink:#f7f7ff; --muted:#b5b5c8; --gold:#ffcc00; --red:#ff2d55;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial; color:var(--ink);
+      background:
+        radial-gradient(1100px 800px at 12% 6%, rgba(255,45,85,.18), transparent 56%),
+        radial-gradient(900px 750px at 92% 18%, rgba(255,204,0,.16), transparent 55%),
+        var(--bg);
+      padding:calc(14px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
+    }
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{
+      width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,204,0,.38), transparent 55%),
+        radial-gradient(circle at 75% 60%, rgba(255,45,85,.34), transparent 58%),
+        rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10); font-weight:1000; color:var(--gold);
+    }
+    h1{margin:0;font-size:18px;line-height:1.1}
+    .sub{margin-top:4px;font-size:12px;color:var(--muted)}
+    .pill{
+      font-size:12px;padding:9px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);color:var(--muted);white-space:nowrap
+    }
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .card{
+      border-radius:22px;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.10);overflow:hidden;box-shadow:0 22px 70px rgba(0,0,0,.55)
+    }
+    .card-head{
+      padding:14px;border-bottom:1px dashed rgba(255,255,255,.16);background:rgba(0,0,0,.16);
+      display:flex;justify-content:space-between;align-items:center;gap:8px
+    }
+    .card-title{font-weight:900}
+    .card-body{padding:14px}
+    label{display:block;margin:8px 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase}
+    input{
+      width:100%;padding:14px 12px;font-size:17px;border-radius:16px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(12,12,20,.88);color:var(--ink);outline:none
+    }
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+    button{
+      padding:14px 12px;font-size:15px;border:0;border-radius:16px;cursor:pointer;color:var(--ink);
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)
+    }
+    button.primary{background:linear-gradient(135deg, rgba(255,45,85,1), rgba(255,204,0,1));color:#111;font-weight:1000}
+    .result{
+      margin-top:14px;padding:12px;border-radius:18px;background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10)
+    }
+    .big{font-size:26px;font-weight:1000;margin-top:5px}
+    .meta{margin-top:6px;color:var(--muted);font-size:13px}
+    .footer{margin-top:12px;font-size:12px;color:var(--muted);line-height:1.45}
+    .overlay{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999;
+      background:
+        radial-gradient(1000px 700px at 50% 25%, rgba(255,204,0,.22), transparent 55%),
+        radial-gradient(900px 700px at 50% 70%, rgba(255,45,85,.24), transparent 55%),
+        rgba(0,0,0,.93);
+      padding:18px;text-align:center
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      width:min(620px,100%);border-radius:28px;border:1px solid rgba(255,255,255,.14);
+      background:rgba(17,17,27,.75);padding:18px
+    }
+    .overlay .title{font-size:14px;color:var(--muted);text-transform:uppercase}
+    .overlay .now{font-size:46px;font-weight:1000;color:var(--gold);margin:10px 0 12px}
+    .overlay .sub2{font-size:16px;margin-bottom:14px}
+    @media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="mark">MB</div>
+      <div>
+        <h1>Malling Bio – Lys-alarm</h1>
+        <div class="sub">2 sale • Østjyllands bedste popcorn • Det danske vejr er biografvejr 🍿</div>
+      </div>
+    </div>
+    <div class="pill" id="clock">—</div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="card-head">
+        <div class="card-title">🎬 Sal 1</div>
+        <div class="pill">Klar til lys</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <label>Nået til</label>
+            <input id="s1_current" placeholder="0:37:30">
+          </div>
+          <div>
+            <label>Tænd lys ved</label>
+            <input id="s1_target" placeholder="1:42:10">
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="calc('s1')">Beregn</button>
+          <button onclick="startAlarm('s1')">Start alarm</button>
+          <button onclick="stopAlarm('s1')">Stop</button>
+        </div>
+        <div class="result">
+          <div>Sæt alarm til:</div>
+          <div class="big" id="s1_result">—</div>
+          <div class="meta" id="s1_status">Klar</div>
+          <div class="meta" id="s1_when">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div class="card-title">🎬 Sal 2</div>
+        <div class="pill">Klar til lys</div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <label>Nået til</label>
+            <input id="s2_current" placeholder="0:21:40">
+          </div>
+          <div>
+            <label>Tænd lys ved</label>
+            <input id="s2_target" placeholder="2:03:30">
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="primary" onclick="calc('s2')">Beregn</button>
+          <button onclick="startAlarm('s2')">Start alarm</button>
+          <button onclick="stopAlarm('s2')">Stop</button>
+        </div>
+        <div class="result">
+          <div>Sæt alarm til:</div>
+          <div class="big" id="s2_result">—</div>
+          <div class="meta" id="s2_status">Klar</div>
+          <div class="meta" id="s2_when">—</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">
+    Du kan skrive tider som <b>1:42:10</b>, <b>42:10</b> eller bare <b>90</b>.<br>
+    Hver sal har sin egen alarm.
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="box">
+      <div class="title" id="ov_title">Malling Bio siger:</div>
+      <div class="now" id="ov_now">TÆND LYSET NU!</div>
+      <div class="sub2" id="ov_sub">Alarmen er gået.</div>
+      <button class="primary" onclick="hideOverlay()">Okay 💡</button>
+    </div>
+  </div>
+
+<script>
+const timers = {};
+function $(id){ return document.getElementById(id); }
+
+function parseTime(str){
+  const parts = String(str || "").trim().split(":").map(p => p.trim()).filter(Boolean);
+  if (!parts.length) return null;
+  let h=0,m=0,s=0;
+  if (parts.length === 3){ h=+parts[0]; m=+parts[1]; s=+parts[2]; }
+  else if (parts.length === 2){ m=+parts[0]; s=+parts[1]; }
+  else { s=+parts[0]; }
+  if ([h,m,s].some(x => Number.isNaN(x) || x < 0)) return null;
+  return h*3600 + m*60 + s;
+}
+
+function fmt(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec/3600);
+  const m = Math.floor((sec%3600)/60);
+  const s = sec%60;
+  if (h > 0) return `${h} time${h===1?'':'r'}, ${m} min og ${s} sek`;
+  if (m > 0) return `${m} min og ${s} sek`;
+  return `${s} sek`;
+}
+
+function fmtClock(date){
+  const hh = String(date.getHours()).padStart(2,"0");
+  const mm = String(date.getMinutes()).padStart(2,"0");
+  const ss = String(date.getSeconds()).padStart(2,"0");
+  return `${hh}:${mm}:${ss}`;
+}
+
+function tickClock(){ $("clock").textContent = fmtClock(new Date()); }
+setInterval(tickClock, 1000); tickClock();
+
+function calc(prefix){
+  const cur = parseTime($(`${prefix}_current`).value);
+  const tgt = parseTime($(`${prefix}_target`).value);
+
+  if (cur == null || tgt == null){
+    $(`${prefix}_result`).textContent = "Ugyldigt format";
+    $(`${prefix}_status`).textContent = "Brug fx 0:37:30 eller 1:42:10";
+    $(`${prefix}_when`).textContent = "—";
+    return null;
+  }
+
+  const diff = tgt - cur;
+  if (diff <= 0){
+    $(`${prefix}_result`).textContent = "0 sek";
+    $(`${prefix}_status`).textContent = "Du er allerede forbi tænd-lyspunktet";
+    $(`${prefix}_when`).textContent = "—";
+    return 0;
+  }
+
+  $(`${prefix}_result`).textContent = fmt(diff);
+  $(`${prefix}_status`).textContent = "Klar 🍿";
+  $(`${prefix}_when`).textContent = `Tænd lys kl. ${fmtClock(new Date(Date.now() + diff*1000))}`;
+  return diff;
+}
+
+function beep(times=3){
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  let t0 = ctx.currentTime;
+  for(let i=0;i<times;i++){
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.value = 880;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.001, t0);
+    g.gain.exponentialRampToValueAtTime(0.35, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+    o.start(t0); o.stop(t0 + 0.24);
+    t0 += 0.28;
+  }
+}
+
+function showOverlay(prefix){
+  $("ov_title").textContent = prefix === "s1" ? "Sal 1 siger:" : "Sal 2 siger:";
+  $("ov_now").textContent = prefix === "s1" ? "TÆND LYSET NU! (SAL 1)" : "TÆND LYSET NU! (SAL 2)";
+  $("ov_sub").textContent = "Alarmen er gået – tak for en god forestilling 🍿";
+  $("overlay").classList.add("show");
+}
+function hideOverlay(){ $("overlay").classList.remove("show"); }
+
+function startAlarm(prefix){
+  const diff = calc(prefix);
+  if (!diff) return;
+
+  try { beep(1); } catch(e) {}
+  stopAlarm(prefix, true);
+
+  const endAt = Date.now() + diff * 1000;
+  timers[prefix] = setInterval(() => {
+    const left = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+    $(`${prefix}_status`).textContent = left > 0 ? `Tid tilbage: ${fmt(left)}` : "NU!";
+    if (left <= 0){
+      clearInterval(timers[prefix]);
+      timers[prefix] = null;
+      try { beep(4); } catch(e) {}
+      if (navigator.vibrate) navigator.vibrate([260,120,260,120,520]);
+      showOverlay(prefix);
+    }
+  }, 250);
+}
+
+function stopAlarm(prefix, silent=false){
+  if (timers[prefix]){
+    clearInterval(timers[prefix]);
+    timers[prefix] = null;
+  }
+  if (!silent){
+    $(`${prefix}_status`).textContent = "Alarm stoppet.";
+    $(`${prefix}_when`).textContent = "—";
+  }
+}
+
+$("s1_current").value = "0:37:30";
+$("s1_target").value = "1:42:10";
+$("s2_current").value = "0:21:40";
+$("s2_target").value = "2:03:30";
+calc("s1");
+calc("s2");
+</script>
+</body>
+</html>
